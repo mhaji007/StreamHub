@@ -5,6 +5,8 @@
 // Necessary modules from Next
 import Document, { Head, Html, Main, NextScript } from "next/document";
 
+// Will only be able to render serverside props
+// using this custom document component
 class MyDocument extends Document {
   // Fetch props per document page
   static async getInitialProps(ctx) {
