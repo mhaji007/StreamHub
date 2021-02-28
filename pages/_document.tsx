@@ -3,8 +3,9 @@
 // this custom document
 
 // Necessary modules from Next
+// Allow pull styles from the page and render them on the app
+import { ServerStyleSheets } from "@material-ui/core/styles";
 import Document, { Head, Html, Main, NextScript } from "next/document";
-import { ServerStyleSheets } from "@material-ui/core";
 import React from "react";
 
 // Will only be able to render serverside props
@@ -14,11 +15,15 @@ class MyDocument extends Document {
   static async getInitialProps(ctx) {
     // Render the app and get the context of the page with collected side effects
     const sheets = new ServerStyleSheets();
+    // Reference to the render that happens on screen each time we see a UI element
     const originalRenderPage = ctx.renderPage;
-    // Collect styles from original render on the page
+    // Add some side effects to the render by calling some functions on the render page
+    // and passing them into another function then
+    // Provide some enhancements to the original render
     ctx.renderPage = () =>
+    // Collect styles from original render on the page
       originalRenderPage({
-        envhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
+        enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
       });
 
     const initialProps = await Document.getInitialProps(ctx);
@@ -31,6 +36,7 @@ class MyDocument extends Document {
       ],
     };
   }
+
   // Render javascript elements
   // AS document is rendered only server-side, event handlers such as
   // onClick will not work in this context
@@ -38,11 +44,15 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
+          />
+        </Head>
           <body>
             <Main />
             <NextScript />
           </body>
-        </Head>
       </Html>
     );
   }
